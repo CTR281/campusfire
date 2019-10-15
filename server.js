@@ -15,15 +15,23 @@ function makeid(length) {
     }
     return result;
 }
-function genId(){
-    clientKey = makeid(8);
+
+function genId(txt){
+   // clientKey = makeid(8);
+    clientKey = txt;
+    code = "://localhost:3000/mobile/" + clientKey;
+    qr.toFile('qr.png', code);
+    console.log(clientKey);
 }
+
+genId("kek");
 
 app.get('/ping', function (req, res) {
  return res.send('pong');
 });
 
 app.get('/display/:key', function(req, res){
+    console.log("hey");
     if(req.params.key === 'fire'){
         res.send('ok');
     }else
@@ -33,19 +41,23 @@ app.get('/display/:key', function(req, res){
 
 app.get('/mobile/:key', function(req, res){
     if(req.params.key == clientKey){
-        genId();
-        let code = "://localhost:3000/display/" + clientKey;
-        qr.toFile('qr.png', code, function(err){
-            res.sendFile(path.resolve(__dirname+'/../qr.png'))
-    });
+        genId("kek2");
+        console.log(clientKey);
         res.send('ok');}
-        else
-        res.send('ko');
+        else{
+        res.send('ko');}
 });
 
 app.get('/key', function(req, res){
     res.send(clientKey);
-})
+});
+
+app.get('/qr', function(req, res){
+    let code = "://localhost:3000/mobile/" + clientKey;
+    qr.toFile('qr.png', code, function(err){
+        res.sendFile(path.resolve(__dirname+'/qr.png'))
+    });
+});
 
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

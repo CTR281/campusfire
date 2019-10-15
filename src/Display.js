@@ -2,7 +2,6 @@ import React from 'react';
 import logo from './cfwhite.png';
 import './App.css';
 
-
 class Display extends React.Component {
     constructor(props) {
         super(props);
@@ -18,6 +17,7 @@ class Display extends React.Component {
 
     checkKey(key) {
         const _this = this;
+        console.log(key)
         fetch('/display/'+key).then(function(resp){
             resp.text().then(function(txt){
                 console.log(txt);
@@ -46,7 +46,7 @@ class Display extends React.Component {
             <div className="Display">
                 <header>
                     <img src={logo} className="Display-logo" alt="logo" />
-
+                    <img src= "/qr" className = "qrCode" alt="gros échec de qreu" />
                 </header>
 
                 {postits}
@@ -55,7 +55,6 @@ class Display extends React.Component {
             </div>
         );
     }
-
 }
 
 function PostIt(props){
