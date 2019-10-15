@@ -16,15 +16,14 @@ function makeid(length) {
     return result;
 }
 
-function genId(txt){
-   // clientKey = makeid(8);
-    clientKey = txt;
+function genId(){
+    clientKey = makeid(8);
     code = "://localhost:3000/mobile/" + clientKey;
     qr.toFile('qr.png', code);
-    console.log(clientKey);
+    //console.log(clientKey);
 }
 
-genId("kek");
+genId();
 
 app.get('/ping', function (req, res) {
  return res.send('pong');
@@ -41,8 +40,8 @@ app.get('/display/:key', function(req, res){
 
 app.get('/mobile/:key', function(req, res){
     if(req.params.key == clientKey){
-        genId("kek2");
-        console.log(clientKey);
+        genId();
+        //console.log(clientKey);
         res.send('ok');}
         else{
         res.send('ko');}
