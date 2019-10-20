@@ -13,8 +13,7 @@ let clientlist = [];
 app.use(express.static(path.join(__dirname, 'build')));
 
 function genQr(str){
-  code = "http://localhost:3000/mobile/"+str;
-  qr.toFile('qr.png', code);
+  qr.toFile('qr.png', str);
 }
 
 function makeid(length) {
