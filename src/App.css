@@ -34,6 +34,21 @@
   max-height: 10vh;
 }
 
+.hax{
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-size: cover;
+}
+
+.Mobile{
+  background-color: #012346;
+  min-height: 100vh;
+  color: white;
+  text-align: center;
+  display: flex;
+  flex-flow: column;
+}
 .postit{
   width: 195px;
   height: 195px;

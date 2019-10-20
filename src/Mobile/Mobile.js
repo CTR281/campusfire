@@ -2,11 +2,19 @@ import React, { Component } from 'react';
 import ReactNipple from 'react-nipple';
 import io from 'socket.io-client';
 import logo from '../Assets/logo.svg';
+import hax from '../Assets/hax.jpg';
 import '../App.css';
 
-function checkKey(key) {
-
-  return true;
+function checkKey(key, component) {
+  fetch(`/mobile/${key}`)
+      .then((resp) => {
+        resp.text()
+            .then((txt) => {
+              console.log(txt);
+              component.state.init = txt === 'ok';
+              console.log(component.state.init);
+            })
+      });
 }
 
 class Mobile extends Component {
@@ -14,6 +22,7 @@ class Mobile extends Component {
     super();
     this.state = {
       socket: null,
+      init: false
     };
 
     this.handleMove = this.handleMove.bind(this);
@@ -22,13 +31,19 @@ class Mobile extends Component {
   componentDidMount() {
     const { match } = this.props;
     const { params: { key } } = match;
-    if (match) {
-      checkKey(key);
-      const socket = io();
-      this.setState({
-        socket,
-      });
-    }
+    fetch(`/mobile/${key}`)
+        .then((resp) => {
+          resp.text()
+              .then((txt) => {
+                this.state.init = txt === 'ok';
+                if (match && this.state.init) {
+                  const socket = io();
+                  this.setState({
+                    socket,
+                  });
+                }
+              })
+        });
   }
 
   handleMove(event, data) {
@@ -39,21 +54,30 @@ class Mobile extends Component {
   }
 
   render() {
-    return (
-      <div className="Display">
-        <header>
-          <img src={logo} className="Display-logo" alt="logo" />
-        </header>
-        <ReactNipple
-          option={{ mode: 'dynamic' }}
-          style={{
-            flex: '1 1 auto',
-            position: 'relative',
-          }}
-          onMove={this.handleMove}
-        />
-      </div>
-    );
+    if (this.state.init) {
+      return (
+          <div className="Display">
+            <header>
+              <img src={logo} className="Display-logo" alt="logo"/>
+            </header>
+            <ReactNipple
+                option={{mode: 'dynamic'}}
+                style={{
+                  flex: '1 1 auto',
+                  position: 'relative',
+                }}
+                onMove={this.handleMove}
+            />
+          </div>
+      );
+    }
+    else {
+      return (
+          <div className="Mobile">
+            <img src={hax} className = "hax"/>
+          </div>
+      )
+    }
   }
 }
 
