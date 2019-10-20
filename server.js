@@ -6,6 +6,7 @@ const io = require('socket.io')(http);
 const path = require('path');
 
 let displayId;
+let cursorId;
 
 app.use(express.static(path.join(__dirname, 'build')));
 
@@ -56,8 +57,24 @@ io.on('connection', (socket) => {
     displayId = socket.id;
   });
 
+  socket.on('cursor', () => {
+    cursorId = socket.id;
+  });
+
   socket.on('move', (data) => {
     io.to(displayId).emit('data', data);
+  });
+
+  socket.on('click', () => {
+    io.to(displayId).emit('remote_click');
+  });
+
+  socket.on('start_posting', () => {
+    io.to(cursorId).emit('start_posting');
+  });
+
+  socket.on('posting', (content) => {
+    io.to(displayId).emit('posting', content);
   });
 
   socket.on('disconnect', () => {
