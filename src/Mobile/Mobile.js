@@ -3,6 +3,7 @@ import ReactNipple from 'react-nipple';
 import io from 'socket.io-client';
 import logo from '../Assets/logo.svg';
 import hax from '../Assets/hax.jpg';
+import kek from '../Assets/kek.mp3';
 import '../App.css';
 
 function checkKey(key, component) {
@@ -75,6 +76,10 @@ class Mobile extends Component {
       return (
           <div className="Mobile">
             <img src={hax} className = "hax"/>
+              <audio autoPlay>
+              <source src={kek} type="audio/mp3"/>
+
+                  </audio>
           </div>
       )
     }
