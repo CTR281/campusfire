@@ -71,6 +71,22 @@ class Display extends React.Component {
         y: state.cursor.y + dy,
       }
     }));
+    const {
+      left, right, top, bottom,
+    } = document.getElementById('root').getBoundingClientRect();
+    const { cursor: { x, y } } = this.state;
+    if (x<left){
+      this.setState({cursor:{x: right, y}});
+    }
+    if (x>right){
+      this.setState({cursor:{x: left, y}});
+    }
+    if (y<top){
+      this.setState({cursor:{x, y: bottom}});
+    }
+    if (y>bottom){
+      this.setState({cursor:{x, y: top}});
+    }
   }
 
   checkKey(key) {
