@@ -21,6 +21,7 @@ class Display extends React.Component {
 
     this.state = {
       socket: null,
+      qr_path:'/qr',
       texts: [],
       cursor: { x: 0, y: 0 },
       keyChecked: false,
@@ -32,6 +33,11 @@ class Display extends React.Component {
     this.checkKey(key);
     const socket = io();
     socket.emit('display');
+
+    socket.on('reload_qr', () => {
+      this.setState({qr_path: this.state.qr_path + "?" + Date.now()});
+    });
+
     socket.on('data', (data) => {
       if (data.length === 2) {
         this.moveCursor(data);
@@ -85,7 +91,7 @@ class Display extends React.Component {
   }
 
   render() {
-    const { texts, cursor: { x, y }, keyChecked } = this.state;
+    const { texts, cursor: { x, y }, keyChecked, qr_path} = this.state;
     const postits = texts.map((text) => <PostIt key = {text} id={text} text={text} />);
     return (
       keyChecked
@@ -99,7 +105,7 @@ class Display extends React.Component {
             <Pointer id="pointer" color="red" x={x} y={y} />
 
             <footer>
-                <img src="/qr" alt="" className="qr" />
+                <img src={qr_path} alt="" className="qr" />
             </footer>
           </div>
         ) : (

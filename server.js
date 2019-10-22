@@ -14,7 +14,7 @@ let clients = [];
 app.use(express.static(path.join(__dirname, 'build')));
 
 function genQr(str){
-  qr.toFile('qr.png', str);
+  qr.toFile('src/Assets/qr.png', str);
 }
 
 function makeid(length) {
@@ -69,6 +69,7 @@ app.get('/mobile/:key', (req, res) => {
       userAuthorized = true;
       if (clients.length < 4 && clients[i].clientId === null){
       clientKey = makeid(8);
+      io.to(displayId).emit('reload_qr');
       }
       break;
     }
@@ -84,7 +85,7 @@ app.get('/key', (req, res) => {
 });
 
 app.get('/qr', (req,res) => {
-  res.sendFile(path.resolve(__dirname+'/qr.png'))
+  res.sendFile(path.resolve(__dirname+'/src/Assets/qr.png'))
 })
 
 app.get('/', (req, res) => {
