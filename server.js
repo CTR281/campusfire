@@ -121,8 +121,9 @@ io.on('connection', (socket) => {
     displayId = socket.id;
   });
 
-  socket.on('cursor', () => {
+  socket.on('cursor', (data) => {
     cursorId = socket.id;
+    io.to(cursorId).emit('clientKey', data);
   });
 
   socket.on('move', (data) => {

@@ -21,9 +21,10 @@ class Display extends React.Component {
 
     this.state = {
       socket: null,
+      clients: [],
       qr_path:'/qr',
       texts: [],
-      cursor: { x: 0, y: 0 },
+      cursor:[{ x: 0, y: 0 }, {x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}],
       keyChecked: false,
     };
   }
@@ -38,8 +39,13 @@ class Display extends React.Component {
       this.setState({qr_path: this.state.qr_path + "?" + Date.now()});
     });
 
+    socket.on('clientKey', (data) => {
+      let clientsInfo = {clientKey : data.clientKey, clientId: data.clientId};
+      this.state.clients.push(clientsInfo);
+    });
+
     socket.on('data', (data) => {
-      if (data.length === 2) {
+      if (data.length === 3) {
         this.moveCursor(data);
       }
     });
@@ -62,15 +68,17 @@ class Display extends React.Component {
   }
 
   moveCursor(data) {
+    console.log(data);
     const displacement = data[1] * 0.2;
     const dx = displacement * Math.cos(data[0]);
     const dy = -displacement * Math.sin(data[0]);
-    this.setState((state) => ({
-      cursor: {
-        x: state.cursor.x + dx,
-        y: state.cursor.y + dy,
-      }
-    }));
+    let i = this.findKey(data[2]);
+    const {cursor} = this.state;
+    cursor[i].x += dx;
+    cursor[i].y += dy;
+    this.setState({
+      cursor,
+    });
     const {
       left, right, top, bottom,
     } = document.getElementById('root').getBoundingClientRect();
@@ -104,6 +112,16 @@ class Display extends React.Component {
             this.setState({ keyChecked: false });
           });
       });
+  }
+
+  findKey(id){
+    const {clients} = this.state;
+    for (let i=0; i<clients.length; i++){
+      if (clients[i].clientId === id){
+        return i;
+      }
+    }
+    return null;
   }
 
   render() {

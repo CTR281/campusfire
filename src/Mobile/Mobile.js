@@ -34,7 +34,7 @@ class Mobile extends Component {
                 if (match && this.state.keyChecked) {
                   const socket = io();
                   socket.emit('storeClientInfo', {clientKey : key, clientId: this.state.socket});
-                  socket.emit('cursor');
+                  socket.emit('cursor', {clientKey : key, clientId: this.state.socket});
                   socket.on('start_posting', () => {
                     this.setState({
                       type: true,
@@ -54,7 +54,7 @@ class Mobile extends Component {
   handleMove(_, data) {
     const { socket } = this.state;
     if (socket) {
-      socket.emit('move', [data.angle.radian, data.distance]);
+      socket.emit('move', [data.angle.radian, data.distance, this.state.socket]);
     }
     this.setState({
       distance: data.distance,
