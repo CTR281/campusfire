@@ -92,9 +92,10 @@ class Mobile extends Component {
   }
 
   render() {
-    const { type } = this.state;
-    if (this.state.keyChecked) {
+    const { type, keyChecked } = this.state;
       return (
+          keyChecked
+          ? (
           <div className="Mobile" onClick={this.handleClick}>
             <header>
               <img src={logo} className="Display-logo" alt="logo"/>
@@ -113,19 +114,11 @@ class Mobile extends Component {
                 onClick={this.handleEnd}
             />
           </div>
-      );
-    }
-    else{
-      return(
-          <div className="MobileError">
-            <img src={hax} className = "hax"/>
-            <audio autoPlay>
-              <source src={kek} type="audio/mp3"/>
-
-            </audio>
-          </div>
       )
-    }
+    : (
+                  <div className="Display" />
+              )
+  );
   }
 }
 
