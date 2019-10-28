@@ -25,6 +25,7 @@ class Mobile extends Component {
 
   async componentDidMount() {
       const { match: { params: { key } } } = this.props;
+      this.state.key = key;
      await this.checkKey(key);
      console.log(this.state.keyChecked);
      if (this.state.keyChecked) {

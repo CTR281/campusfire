@@ -8,8 +8,6 @@ const io = require('socket.io')(http);
 const qr = require('qrcode');
 const { url } = require('./config');
 
-let displayId=[];
-let cursorId;
 const clients = [];
 
 app.use(express.static(path.join(__dirname, 'build')));
@@ -137,17 +135,16 @@ io.on('connection', (socket) => {
   });
 
   socket.on('cursor', (data) => {
-    cursorId = socket.id;
     //console.log('Mobile id:' + cursorId);
     socket.to('display_room').emit('displayCursor', data.clientKey);
   });
 
   socket.on('move', (data) => {
-    socket.to('display_room').emit('data', data);
+    io.to('display_room').emit('data', data);
   });
 
   socket.on('click', (data) => {
-    socket.to('display_room').emit('remote_click', data);
+    io.to('display_room').emit('remote_click', data);
   });
 
   socket.on('start_posting', (data) => {
