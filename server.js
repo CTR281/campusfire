@@ -81,7 +81,7 @@ app.get('/mobile/:key', (req, res) => {
       userAuthorized = true;
       if (clients.length < 4 && clients[i].clientId === null){
         clientKey = makeId(8);
-        displayId.forEach((element) => {io.to(element).emit('reload_qr')});
+        io.to('display_room').emit('reload_qr');
       }
       break;
     }
@@ -132,50 +132,39 @@ io.on('connection', (socket) => {
   });
 
   socket.on('display', () => {
-    displayId.push(socket.id);
-    console.log(displayId);
+    socket.join('display_room');
     console.log('Borne id: ' + socket.id);
   });
 
   socket.on('cursor', (data) => {
     cursorId = socket.id;
     //console.log('Mobile id:' + cursorId);
-    displayId.forEach((element) => {io.to(element).emit('displayCursor', data.clientKey)});
+    socket.to('display_room').emit('displayCursor', data.clientKey);
   });
 
   socket.on('move', (data) => {
-    displayId.forEach((element) => {io.to(element).emit('data', data)});
+    socket.to('display_room').emit('data', data);
   });
 
   socket.on('click', (data) => {
-    displayId.forEach((element) => {io.to(element).emit('remote_click', data)});
+    socket.to('display_room').emit('remote_click', data);
   });
 
   socket.on('start_posting', (data) => {
-    io.to(data).emit('start_posting');
+    socket.to(data).emit('start_posting');
   });
 
   socket.on('posting', (content) => {
-    displayId.forEach((element) => {io.to(element).emit('posting', content)});
+    socket.to('display_room').emit('posting', content);
   });
 
   socket.on('disconnect', () => {
     console.log('User disconnected');
     key = findKey(socket.id);
     if (key !== null) {
-      displayId.forEach((element) => {
-        io.to(element).emit('disconnect_user', key)
-      });
-      deleteId(key);
+      socket.to('display_room').emit('disconnect_user', key);
+        deleteId(key);
     }
-    else{
-      for (let i=0, len = displayId.length; i<len; i+=0){
-        if (displayId[i] === socket.id){
-          displayId.splice(i,1);
-        }
-      }
-    }
-    console.log(displayId);
   });
 });
 console.log(process.env[process.env.PORT]);

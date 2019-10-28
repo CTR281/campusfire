@@ -24,17 +24,7 @@ class Mobile extends Component {
   }
 
   async componentDidMount() {
-      new Promise ((resolve,reject) => {
-          const {match} = this.props;
-          const {params: {key}} = this.match;
-          if (match) {
-              this.state.key = key;
-              resolve(match);
-          } else {
-              reject("match undefined");
-          }
-      });
-      const {key} = this.state;
+      const { match: { params: { key } } } = this.props;
      await this.checkKey(key);
      console.log(this.state.keyChecked);
      if (this.state.keyChecked) {
