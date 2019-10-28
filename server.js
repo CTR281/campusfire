@@ -8,7 +8,7 @@ const io = require('socket.io')(http);
 const qr = require('qrcode');
 const { url } = require('./config');
 
-let displayId;
+let displayId=[];
 let cursorId;
 const clients = [];
 
@@ -81,7 +81,7 @@ app.get('/mobile/:key', (req, res) => {
       userAuthorized = true;
       if (clients.length < 4 && clients[i].clientId === null){
         clientKey = makeId(8);
-        io.to(displayId).emit('reload_qr');
+        displayId.forEach((element) => {io.to(element).emit('reload_qr')});
       }
       break;
     }
@@ -132,22 +132,23 @@ io.on('connection', (socket) => {
   });
 
   socket.on('display', () => {
-    displayId = socket.id;
-    console.log('Borne id: ' + displayId);
+    displayId.push(socket.id);
+    console.log(displayId);
+    console.log('Borne id: ' + socket.id);
   });
 
   socket.on('cursor', (data) => {
     cursorId = socket.id;
     //console.log('Mobile id:' + cursorId);
-    io.to(displayId).emit('displayCursor', data.clientKey);
+    displayId.forEach((element) => {io.to(element).emit('displayCursor', data.clientKey)});
   });
 
   socket.on('move', (data) => {
-    io.to(displayId).emit('data', data);
+    displayId.forEach((element) => {io.to(element).emit('data', data)});
   });
 
   socket.on('click', (data) => {
-    io.to(displayId).emit('remote_click', data);
+    displayId.forEach((element) => {io.to(element).emit('remote_click', data)});
   });
 
   socket.on('start_posting', (data) => {
@@ -155,14 +156,26 @@ io.on('connection', (socket) => {
   });
 
   socket.on('posting', (content) => {
-    io.to(displayId).emit('posting', content);
+    displayId.forEach((element) => {io.to(element).emit('posting', content)});
   });
 
   socket.on('disconnect', () => {
     console.log('User disconnected');
     key = findKey(socket.id);
-    io.to(displayId).emit('disconnect_user', key);
-    deleteId(key);
+    if (key !== null) {
+      displayId.forEach((element) => {
+        io.to(element).emit('disconnect_user', key)
+      });
+      deleteId(key);
+    }
+    else{
+      for (let i=0, len = displayId.length; i<len; i+=0){
+        if (displayId[i] === socket.id){
+          displayId.splice(i,1);
+        }
+      }
+    }
+    console.log(displayId);
   });
 });
 console.log(process.env[process.env.PORT]);

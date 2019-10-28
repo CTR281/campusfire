@@ -105,7 +105,7 @@ class Display extends Component {
   }
 
   checkKey(key) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       fetch(`/display/${key}`)
           .then((resp) => {
             resp.text()
@@ -119,6 +119,7 @@ class Display extends Component {
                 })
                 .catch(() => {
                   this.setState({keyChecked: false});
+                  reject("no key");
                 });
           });
     });

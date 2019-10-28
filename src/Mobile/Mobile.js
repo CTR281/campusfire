@@ -24,11 +24,17 @@ class Mobile extends Component {
   }
 
   async componentDidMount() {
-    const { match } = this.props;
-    const { params: { key } } = match;
-    if (match) {
-      this.state.key = key;
-      console.log(key);
+      new Promise ((resolve,reject) => {
+          const {match} = this.props;
+          const {params: {key}} = this.match;
+          if (match) {
+              this.state.key = key;
+              resolve(match);
+          } else {
+              reject("match undefined");
+          }
+      });
+      const {key} = this.state;
      await this.checkKey(key);
      console.log(this.state.keyChecked);
      if (this.state.keyChecked) {
@@ -47,7 +53,7 @@ class Mobile extends Component {
        socket.emit('cursor', {clientKey: key});
      }
     }
-  }
+
 
 
   handleMove(_, data) {
@@ -91,7 +97,7 @@ class Mobile extends Component {
   }
 
  checkKey(key) {
-     return new Promise((resolve) => {
+     return new Promise((resolve,reject) => {
        fetch(`/mobile/${key}`)
            .then((resp) => {
              resp.text()
@@ -105,6 +111,7 @@ class Mobile extends Component {
                  })
                  .catch(() => {
                    this.setState({keyChecked: false});
+                   reject("no key");
                  });
            });
      });
